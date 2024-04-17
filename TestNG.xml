@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd" >
+<suite name="API Test Suite" parallel="false">
+    <listeners>
+        <listener class-name="com.oktay.spacex.api.listeners.MyTestListener"/>
+    </listeners>
+
+    <test name="User Test Cases">
+
+        <classes>
+            <class name="com.oktay.spacex.api.test.CapsuleTest"></class>
+        </classes>
+
+    </test>
+
+</suite>
