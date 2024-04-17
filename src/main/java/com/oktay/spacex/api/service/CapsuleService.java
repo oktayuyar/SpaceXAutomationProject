@@ -40,7 +40,7 @@ public class CapsuleService {
             }
             return capsuleSerials;
         } catch (Exception ex) {
-            Assert.fail("The capsule list is null!");
+            Assert.fail(ex.getMessage());
         }
         return capsuleSerials;
     }
@@ -59,17 +59,48 @@ public class CapsuleService {
             return upcomingCapsuleSerials;
 
         } catch (Exception ex) {
-            Assert.fail("The capsule list is null!");
+            Assert.fail(ex.getMessage());
         }
         return upcomingCapsuleSerials;
     }
 
     public void checkMatchedCapsuleSerials(List<String> capsuleSerials, List<String> upcomingCapsuleSerials) {
-        ArrayList<String> matchedItems = new ArrayList<>(capsuleSerials);
-        matchedItems.retainAll(upcomingCapsuleSerials);
-        logger.info("Matched Capsule Serial Items::" + matchedItems);
-        for (int i = 0; i < matchedItems.size(); i++){
-            readWriteValues.setProperty("matchedCapsule" + i,matchedItems.get(i));
+        try {
+            ArrayList<String> matchedItems = new ArrayList<>(capsuleSerials);
+            matchedItems.retainAll(upcomingCapsuleSerials);
+            logger.info("Matched Capsule Serial Items::" + matchedItems);
+            for (int i = 0; i < matchedItems.size(); i++) {
+                readWriteValues.setProperty("CommonID" + i, matchedItems.get(i));
+
+            }
+        }catch (Exception ex){
+            Assert.fail(ex.getMessage());
+        }
+    }
+
+    public void checkOriginalLaunchWithCommonID(String commonID) {
+        try {
+            Response response = request.get("/v3/capsules/" + commonID);
+            Assert.assertEquals(response.getStatusCode(), 200);
+
+            jsonPathEvaluator = response.jsonPath();
+
+            Assert.assertEquals(readWriteValues.getProperty("CommonID0"), jsonPathEvaluator.get("capsule_serial"));
+            Assert.assertNull(jsonPathEvaluator.get("original_launch"), "Original launch parameter is not null!");
+
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
+        }
+    }
+
+    public void checkNameOfTheSelectedFlight(String flightID) {
+        try {
+            Response response = request.get("/v3/capsules");
+            Assert.assertEquals(response.getStatusCode(), 200);
+
+
+        } catch (Exception ex) {
+            Assert.fail(ex.getMessage());
         }
     }
 }
