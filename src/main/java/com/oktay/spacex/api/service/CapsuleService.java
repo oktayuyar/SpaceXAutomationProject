@@ -1,5 +1,9 @@
 package com.oktay.spacex.api.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.oktay.spacex.api.constants.GeneralConstants;
+import com.oktay.spacex.api.data.Capsule;
+import com.oktay.spacex.api.data.Mission;
 import com.oktay.spacex.api.util.ReadWriteValues;
 import com.oktay.spacex.api.util.WebServiceManager;
 import io.restassured.RestAssured;
@@ -14,10 +18,13 @@ import java.util.List;
 /*
  *  Created by oktayuyar on 16.04.2024
  */
-public class CapsuleService {
+public class CapsuleService extends GeneralConstants {
+
 
     private final RestAssured request;
     private JsonPath jsonPathEvaluator;
+    List<Mission> missions;
+    ObjectMapper objectMapper = new ObjectMapper();
     List<String> capsuleSerials;
     List<String> upcomingCapsuleSerials;
     public ReadWriteValues readWriteValues = new ReadWriteValues();
@@ -29,7 +36,7 @@ public class CapsuleService {
 
     public List<String> getCapsules() {
         try {
-            Response response = request.get("/v3/capsules");
+            Response response = request.get(spaceXCapsulesURL);
             Assert.assertEquals(response.getStatusCode(), 200);
 
             jsonPathEvaluator = response.jsonPath();
@@ -47,7 +54,7 @@ public class CapsuleService {
 
     public List<String> getUpcomingCapsules() {
         try {
-            Response response = request.get("/v3/capsules/upcoming");
+            Response response = request.get(spaceXUpcomingCapsulesURL);
             Assert.assertEquals(response.getStatusCode(), 200);
 
             jsonPathEvaluator = response.jsonPath();
@@ -68,19 +75,19 @@ public class CapsuleService {
         try {
             ArrayList<String> matchedItems = new ArrayList<>(capsuleSerials);
             matchedItems.retainAll(upcomingCapsuleSerials);
+            Assert.assertNotNull(matchedItems,"Matched Capsule Serial not found!");
             logger.info("Matched Capsule Serial Items::" + matchedItems);
             for (int i = 0; i < matchedItems.size(); i++) {
                 readWriteValues.setProperty("CommonID" + i, matchedItems.get(i));
-
             }
-        }catch (Exception ex){
+        } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }
     }
 
     public void checkOriginalLaunchWithCommonID(String commonID) {
         try {
-            Response response = request.get("/v3/capsules/" + commonID);
+            Response response = request.get(spaceXCapsulesURL + commonID);
             Assert.assertEquals(response.getStatusCode(), 200);
 
             jsonPathEvaluator = response.jsonPath();
@@ -93,12 +100,23 @@ public class CapsuleService {
         }
     }
 
-    public void checkNameOfTheSelectedFlight(String flightID) {
+    public void checkNameOfTheSelectedFlight(String flightID, String flightName) {
         try {
-            Response response = request.get("/v3/capsules");
+            Response response = request.get(spaceXCapsulesURL);
             Assert.assertEquals(response.getStatusCode(), 200);
 
+            String jsonResponse = response.getBody().asString();
+            Capsule[] capsules = objectMapper.readValue(jsonResponse, Capsule[].class);
 
+            for (Capsule capcule : capsules) {
+                if (capcule.getMissions() != null) {
+                    for (Mission mission: capcule.getMissions()) {
+                        if (mission.getFlight() == 10) {
+                            Assert.assertEquals(mission.getName(),readWriteValues.getProperty("flightName"),"Flight name is not matched!");
+                        }
+                    }
+                }
+            }
         } catch (Exception ex) {
             Assert.fail(ex.getMessage());
         }

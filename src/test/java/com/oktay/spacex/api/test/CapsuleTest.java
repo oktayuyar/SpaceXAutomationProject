@@ -39,6 +39,6 @@ public class CapsuleTest {
     @Test(priority=2)
     @Story("Check Name of The Selected Fligt")
     public void checkNameOfTheSelectedFlight(){
-        capsuleService.checkNameOfTheSelectedFlight(readWriteValues.getProperty("flightID"));
+        capsuleService.checkNameOfTheSelectedFlight(readWriteValues.getProperty("flightID"),readWriteValues.getProperty("flightName"));
     }
 }

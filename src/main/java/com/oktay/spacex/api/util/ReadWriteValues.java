@@ -1,5 +1,6 @@
 package com.oktay.spacex.api.util;
 
+import com.oktay.spacex.api.constants.GeneralConstants;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -12,9 +13,9 @@ import java.util.Set;
 /*
  *  Created by oktayuyar on 16.04.2024
  */
-public class ReadWriteValues {
+public class ReadWriteValues extends GeneralConstants {
 
-    String path = new File("src/test/resources/capsule.properties").getAbsolutePath();
+    String path = new File(capsulePropertiesPath).getAbsolutePath();
     File file = new File(path);
     Properties properties = new Properties();
 
