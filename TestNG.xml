@@ -5,7 +5,7 @@
         <listener class-name="com.oktay.spacex.api.listeners.MyTestListener"/>
     </listeners>
 
-    <test name="User Test Cases">
+    <test name="Capsule Test Cases">
 
         <classes>
             <class name="com.oktay.spacex.api.test.CapsuleTest"></class>
