@@ -41,6 +41,7 @@ public class CapsuleService extends GeneralConstants {
 
             jsonPathEvaluator = response.jsonPath();
             capsuleSerials = jsonPathEvaluator.getList("capsule_serial");
+            logger.info("Capsule Serial Items::" + capsuleSerials);
 
             for (int i = 0; i < capsuleSerials.size(); i++) {
                 readWriteValues.setProperty("Capsule" + i, capsuleSerials.get(i));
@@ -59,6 +60,7 @@ public class CapsuleService extends GeneralConstants {
 
             jsonPathEvaluator = response.jsonPath();
             upcomingCapsuleSerials = jsonPathEvaluator.getList("capsule_serial");
+            logger.info("Upcoming Capsule Serial Items::" + upcomingCapsuleSerials);
 
             for (int i = 0; i < upcomingCapsuleSerials.size(); i++) {
                 readWriteValues.setProperty("upcomingCapsule" + i, upcomingCapsuleSerials.get(i));
